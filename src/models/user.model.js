@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
+// schema for user
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -50,9 +51,12 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// https://expressjs.com/en/guide/using-middleware.html
+// pre middleware - before saving or updating its checked password is changed or not
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next;
 
+  // bcrypt is used for encrypt data through hashing
   this.password = bcrypt.hash(this.password, 10);
   next();
 });
@@ -61,6 +65,7 @@ user.Schema.method.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
+// generate access token through jwt
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
@@ -75,6 +80,8 @@ userSchema.methods.generateAccessToken = function () {
     }
   );
 };
+
+// generate referesh token through jwt
 userSchema.methods.generateRefereshToken = function () {
   return jwt.sign(
     {
