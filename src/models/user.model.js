@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
@@ -57,11 +57,11 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next;
 
   // bcrypt is used for encrypt data through hashing
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-user.Schema.method.isPasswordCorrect = async function (password) {
+userSchema.method.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
