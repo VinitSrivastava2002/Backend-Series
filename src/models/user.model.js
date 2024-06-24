@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
-    refereshToken: {
+    refreshToken: {
       type: String,
     },
   },
@@ -60,7 +60,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.method.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
@@ -81,7 +81,7 @@ userSchema.methods.generateAccessToken = function () {
 };
 
 // generate referesh token through jwt
-userSchema.methods.generateRefereshToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
